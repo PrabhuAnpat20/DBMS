@@ -1,0 +1,30 @@
+package demo2;
+import java.sql.*;
+public class app {
+	
+	public static void main(String[] args) {
+		String query,url,password,user;
+	Connection db=null;
+	 Connection db=null;
+	  ResultSet rs;
+	  PreparedStatement ps;
+	  url="jdbc:mysql://localhost:3306/java";
+	  user="root";
+	  password="1234";
+	try {
+		 Class.forName("com.mysql.jdbc.Driver");
+		 db=DriverManager.getConnection(url,user,password);
+		 Statement cStatement=db.createStatement();
+		
+		 if(db!=null && db.isValid(0)) {
+			 System.out.println("connected successfully");
+		 }
+		
+	}
+	catch(Exception e) {
+		e.printStackTrace();
+	}
+		  
+
+}
+}

@@ -1,0 +1,46 @@
+
+
+package demo;
+import java.util.Scanner;
+import java.sql.*;
+
+
+public class Hello {
+	  public static void main(String[] args) {
+		  
+		  Scanner sc=new Scanner(System.in);
+		  String query,url,password,user;
+		  Connection db=null;
+		  ResultSet rs;
+		  
+		  url="jdbc:mysql://localhost:3306/java";
+		  user="root";
+		  password="1234";
+		  
+		  try {
+			  Class.forName("com.mysql.jdbc.Driver");
+			 db=DriverManager.getConnection(url,user,password);
+			 Statement cStatement=db.createStatement();
+			 if(db!=null && db.isValid(0)) {
+				 System.out.println("connection successfully");
+			 }
+			 
+			 query="SELECT * FROM student";
+             rs=cStatement.executeQuery(query);
+             while(rs.next()) {
+            	 int roll = rs.getInt(1);
+ 				String name = rs.getString(2);
+ 				int marks = rs.getInt(3);
+ 				System.out.println(roll+"\t"+name+"\t"+marks+"\t");
+             }
+             
+			  
+		  }catch(Exception e) {
+			  e.printStackTrace();
+		  }
+		  
+		  
+		  
+	        System.out.println("Hello, World!");
+	    }
+}

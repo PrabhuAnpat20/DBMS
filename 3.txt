@@ -1,0 +1,152 @@
+----------------CREATE TABLES-----------------------
+
+CREATE TABLE Dept(
+Dept_id INT PRIMARY KEY,
+Dept_name varchar(20),
+location varchar(20)
+);
+
+CREATE TABLE Employee
+(Emp_id INT PRIMARY KEY,
+Dept_id INT,
+Emp_fname varchar(20),
+Emp_lname varchar(20),
+Emp_Pos varchar(20),
+Emp_Sal INT,
+Emp_JoinDate DATE,
+FOREIGN KEY (Dept_id) REFERENCES Dept(Dept_id)
+);
+
+CREATE TABLE Project(
+Proj_id INT PRIMARY KEY,
+Dept_id INT ,
+Proj_Name varchar(20),
+Proj_Location varchar(20),
+Proj_cost INT,
+Proj_year YEAR,
+FOREIGN KEY (Dept_id) REFERENCES Dept(Dept_id)
+);
+
+-----------------INSERT DATA-----------------
+
+INSERT INTO Dept (Dept_id, Dept_name, location) VALUES
+(1, 'HR', 'New York'),
+(2, 'IT', 'San Francisco'),
+(3, 'Finance', 'Chicago'),
+(4, 'Marketing', 'Los Angeles'),
+(5, 'Operations', 'Seattle');
+
+
+INSERT INTO Employee (Emp_id, Dept_id, Emp_fname, Emp_lname, Emp_Pos, Emp_Sal, Emp_JoinDate) VALUES
+(101, 1, 'John', 'Doe', 'Manager', 70000, '2021-03-15'),
+(102, 2, 'Jane', 'Smith', 'Developer', 85000, '2022-01-10'),
+(103, 3, 'Michael', 'Brown', 'Analyst', 60000, '2020-06-23'),
+(104, 2, 'Emily', 'Davis', 'Tester', 55000, '2023-02-05'),
+(105, 4, 'Chris', 'Wilson', 'Executive', 50000, '2021-11-29'),
+(106, 5, 'Anna', 'Taylor', 'Coordinator', 45000, '2019-08-14'),
+(107, 1, 'Robert', 'Miller', 'Assistant', 40000, '2022-09-17'),
+(108, 3, 'Sophie', 'Johnson', 'Accountant', 65000, '2020-04-03');
+
+INSERT INTO Project (Proj_id, Dept_id, Proj_Name, Proj_Location, Proj_cost, Proj_year) VALUES
+(201, 2, 'AI Development', 'San Francisco', 1000000, 2023),
+(202, 3, 'Budget Analysis', 'Chicago', 500000, 2022),
+(203, 1, 'Employee Onboarding', 'New York', 150000, 2021),
+(204, 4, 'Marketing Campaign', 'Los Angeles', 250000, 2024),
+(205, 5, 'Supply Chain', 'Seattle', 750000, 2023),
+(206, 2, 'Web Platform', 'San Francisco', 300000, 2023);
+
+
+-----------------QUERIES----------------------
+
+1. Find Employee details and Department details using NATURAL JOIN.
+
+SELECT * 
+FROM Employee 
+NATURAL JOIN 
+Dept;
+
+
+2. Find the emp_fname,Emp_position,location,Emp_JoinDate who have same Dept id.
+
+SELECT Emp_fname,Emp_Pos,Emp_JoinDate
+FROM Employee
+WHERE Dept_id=1;
+
+
+3. Find the Employee details ,Proj_id,Project cost who does not have Project
+location as ‘San Francisco’
+
+SELECT * 
+FROM Employee 
+NATURAL JOIN 
+Dept 
+WHERE Dept.location NOT IN ('San Francisco');
+
+4. Find Department Name ,employee name, Emp_position for which project year
+is 2020,
+
+SELECT Dept_name,Emp_fname,Emp_Pos
+FROM Employee
+JOIN Dept
+ON Employee.Dept_id=Dept.Dept_id
+JOIN Project 
+ON Dept.Dept_id = Project.Dept_id
+WHERE Proj_year=2023;
+
+
+5. Display emp_position,D_name who have Project cost >30000
+
+SELECT DISTINCT Dept_name,Emp_Pos
+FROM Employee
+JOIN Dept
+ON Employee.Dept_id=Dept.Dept_id
+JOIN Project 
+ON Dept.Dept_id = Project.Dept_id
+WHERE Proj_cost>30000;
+
+6. Find the names of all the Projects that started in the year 2023.
+SELECT Proj_name
+FROM Project
+WHERE Proj_year=2023;
+
+7. List the Dept_name having no_of_emp=2
+SELECT Dept.Dept_name
+FROM Employee 
+NATURAL JOIN Dept
+GROUP BY Dept.Dept_name
+HAVING COUNT(Employee.Emp_id) = 2;
+
+
+8.Display the total number of employee who have joined any project before 2020
+
+SELECT COUNT(DISTINCT Employee.Emp_id) AS Total_Employees
+FROM Employee
+JOIN Dept ON Employee.Dept_id = Dept.Dept_id
+JOIN Project ON Dept.Dept_id = Project.Dept_id
+WHERE Project.Proj_year < 2020;
+
+
+9.Create a view showing the employee and Department details.
+CREATE VIEW view1 AS
+SELECT * FROM
+Employee NATURAL JOIN 
+Dept; 
+
+
+10. Perform Manipulation on simple view-Insert, update, delete, drop view.
+
+INSERT INTO Employee (Emp_id, Dept_id, Emp_fname, Emp_lname, Emp_Pos, Emp_Sal, Emp_JoinDate)
+VALUES (1002, 1, 'Joe', 'Doge', 'Manager', 70000, '2023-01-15');
+
+UPDATE view1
+SET Emp_Position = 'Senior Developer'
+WHERE Emp_id = 1001; 
+
+DELETE FROM view1
+WHERE Emp_id = 1001; 
+
+DROP VIEW View1;
+
+
+
+

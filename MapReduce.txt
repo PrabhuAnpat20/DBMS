@@ -1,0 +1,33 @@
+db.mark.insertMany([
+  { name: "John", subject: "Math", marks: 85 },
+  { name: "Alice", subject: "Science", marks: 90 },
+  { name: "Bob", subject: "English", marks: 78 },
+  { name: "Daisy", subject: "Math", marks: 92 },
+  { name: "Tom", subject: "Science", marks: 75 },
+  { name: "Mike", subject: "English", marks: 88 }
+]);
+
+var map=function(){emit(this.subject,this.marks)};
+
+var reduce=function(key,values){return Array.sum(values)};
+
+db.mark.mapReduce(map,reduce,{out:"ans"});
+
+
+
+
+
+db.marks.mapReduce(
+...   function() {
+...     // Emit the subject as the key and the marks as the value
+...     emit(this.subject, this.marks);
+...   },
+...   function(key, values) {
+...     // Sum the marks for each subject
+...     return Array.sum(values);
+...   },
+...   {
+...     out: "marks_totals" // Output collection where results will be stored
+...   }
+... );
+{ result: 'marks_totals', ok: 1 }

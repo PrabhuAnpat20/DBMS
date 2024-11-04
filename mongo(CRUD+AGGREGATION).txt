@@ -1,0 +1,164 @@
+use yourDatabaseName;
+
+
+db.createCollection("new");
+
+------------------INSERT----------------------
+
+db.new.insertOne({'name':'Prabhu','roll':1});
+db.new.insertMany([{'name':'Manoj','roll':3},{'name':'Renu','roll':2}]);
+
+
+------------------READ-------------------------
+db.new.find();
+db.new.find().pretty();
+
+
+-------------------UPDATE-------------------------
+db.new.updateOne({'name':'Manoj'},{$set :{'roll':4}});
+
+db.yourCollectionName.updateMany(
+    { age: { $lt: 30 } }, // Filter
+    { $set: { status: "young" } } // Update
+);
+
+db.yourCollectionName.replaceOne(
+    { name: "Sam Smith" }, // Filter
+    { name: "Samuel Smith", age: 22, email: "samuel.smith@example.com" } 
+);
+
+
+-----------------DELETE-----------------
+db.new.deleteOne({'name':'Manoj'});
+
+db.yourCollectionName.deleteMany({ age: { $lt: 25 } }); 
+
+
+
+
+
+
+
+
+
+
+--------------INDEXING------------------
+db.collection.getIndexes()
+db.collection.createIndex( { field_name: -1/1 } )
+
+
+db.purchase_orders.insertMany( [
+{product: "toothbrush", total: 4.75, customer: "Mike"},
+{product: "guitar", total: 199.99, customer: "Tom"},
+{product: "milk", total: 11.33, customer: "Mike"},
+{product: "pizza", total: 8.50, customer: "Karen"},
+{product: "toothbrush", total: 4.75, customer: "Karen"},
+{product: "pizza", total: 4.75, customer: "Dave"},
+{product: "toothbrush", total: 4.75, customer: "Mike"}
+] ) ;
+
+1.Find how much money has been earned by selling the products toothbrushes
+and pizza.
+
+db.purchase_orders. aggregate( [
+{$match: {product: {$in:['toothbrush','pizza'] } } },
+{$group:{ _id: '$product', earning: {$sum:"$total"} } }
+])
+[
+  { _id: 'pizza', earning: 13.25 },
+  { _id: 'toothbrush', earning: 14.25 }
+]
+
+2.Find out how many toothbrushes were sold
+ db.purchase_orders.countDocuments({product:"toothbrush"});
+
+3.Find the total amount of money spent by each customer
+ db.purchase_orders.aggregate([
+  {
+    $group: {
+      _id: "$customer", 
+      spent: { $sum: "$total" } 
+    }
+  }
+]);
+[
+  { _id: 'Karen', spent: 13.25 },
+  { _id: 'Mike', spent: 20.83 },
+  { _id: 'Tom', spent: 199.99 },
+  { _id: 'Dave', spent: 4.75 }
+]
+
+4.Find how much has been spent on each product and sort it by amount spent
+db.purchase_orders.aggregate([
+  {
+    $group: {
+      _id: "$product", 
+      expense: { $sum: "$total" } 
+    }
+  },
+  {
+    $sort: { expense: 1 } 
+  }
+]);
+[
+  { _id: 'milk', expense: 11.33 },
+  { _id: 'pizza', expense: 13.25 },
+  { _id: 'toothbrush', expense: 14.25 },
+  { _id: 'guitar', expense: 199.99 }
+]
+
+5.Find the product with least earnings
+db.purchase_orders.aggregate([
+  {
+    $group: {
+      _id: "$product", 
+      expense: { $sum: "$total" } 
+    }
+  },
+  {
+    $sort: { expense: 1 } 
+  },
+{
+  $limit:1
+}
+]);
+[ { _id: 'milk', expense: 11.33 } ]
+
+
+6.Find how much money each customer has spent on toothbrushes and pizza
+
+db.purchase_orders.aggregate([
+  {
+    $match: { product: { $in: ["toothbrush", "pizza"] } } 
+  },
+  {
+    $group: {
+      _id: "$customer",
+      expense: { $sum: "$total" } 
+    }
+  }
+]);
+
+
+
+7.Find the customer who has given highest business for the product toothbrush
+db.purchase_orders.aggregate([
+  {
+    $match: { product: { $in: ["toothbrush"] } } 
+  },
+  {
+    $group: {
+      _id: "$customer",
+      expense: { $sum: "$total" } 
+    }
+  },
+ {
+    $sort: { expense: -1 } 
+  },
+{
+  $limit:1
+}
+
+]);
+
+
